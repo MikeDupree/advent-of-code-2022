@@ -20,28 +20,35 @@ fn main() {
     };
 
     // Sum up each line, add total to Vec, new index on empty line
-    let mut elf_calories: Vec<u32> = Vec::new();
     if let Ok(lines) = read_lines(INPUT_SRC) {
-        let mut index = 0;
+        let mut current_elfs_calories = 0;
         let mut most_calories_carried = 0;
+        let mut second_most_calories_carried = 0;
+        let mut third_most_calories_carried = 0;
         for line in lines {
+
             if let Ok(calories) = line {
                 if calories.is_empty() {
-                    if elf_calories[index] > most_calories_carried {
-                        most_calories_carried = elf_calories[index]
+                    if current_elfs_calories > most_calories_carried {
+                        third_most_calories_carried = second_most_calories_carried;
+                        second_most_calories_carried = most_calories_carried;
+                        most_calories_carried = current_elfs_calories;
+                    } else if current_elfs_calories > second_most_calories_carried {
+                        third_most_calories_carried = second_most_calories_carried;
+                        second_most_calories_carried = current_elfs_calories;
+                    } else if current_elfs_calories > third_most_calories_carried {
+                        third_most_calories_carried = current_elfs_calories;
                     }
-                    index += 1;
+                    current_elfs_calories = 0;
                     continue;
                 }
-                let calories_int = calories.parse().unwrap();
-                if panic::catch_unwind(|| elf_calories[index]).is_ok() {
-                    elf_calories[index] += calories_int;
-                } else {
-                    elf_calories.push(calories_int);
-                }
+                current_elfs_calories += calories.parse::<i32>().unwrap();
             }
         }
-        println!("Most calories carried = {}", most_calories_carried)
+        println!("1st Most calories carried = {}", most_calories_carried);
+        println!("2nd Most calories carried = {}", second_most_calories_carried);
+        println!("3rd Most calories carried = {}", third_most_calories_carried);
+        println!("Total: {}", most_calories_carried + second_most_calories_carried + third_most_calories_carried)
     }
 }
 
