@@ -1,8 +1,6 @@
-use std::{fs, collections::HashMap};
-
+use std::fs;
+// Day 3 
 fn main() {
-    println!("Hello, world!");
-
     let rankings = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -12,22 +10,20 @@ fn main() {
         .expect("Should have been able to read the file");
     
     let mut points = 0;
+    let mut group = ["", "", ""];
+    let mut group_index: i8 = 0;
     for line in contents.lines() {
-        println!("line count {}", line.len());
-        println!("total items per bag {}", line.len()/2);
-        let (s1, s2) = line.split_at(line.len()/2);
-        println!("line split {}", s1); 
-
-        for c in s1.chars() {
-            if s2.contains(c) {
-                println!("found {}", c);
-                let points_index = rankings.iter().position(|&x| x == c).unwrap();
-                print!("points {}", points);
-                points += points_index + 1;
-                println!(" + {} = {}", points_index + 1, points);
-                break;
+        group[group_index as usize] = line;
+        if group_index == 2 {
+            for c in group[0].chars() {
+                if group[1].contains(c) && group[2].contains(c) {
+                    points += rankings.iter().position(|&x| x == c).unwrap() + 1;
+                    break;
+                }
             }
+            group_index = -1;
         }
+        group_index += 1;
     }
 
     println!("Total Points: {}", points);
