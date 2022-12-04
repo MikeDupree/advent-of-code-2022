@@ -14,7 +14,7 @@ fn main() {
         let p12 = pair1[1].parse::<u32>().unwrap();
         let p21 = pair2[0].parse::<u32>().unwrap();
         let p22 = pair2[1].parse::<u32>().unwrap();
-        if p11 >= p21 && p12 <= p22 || p11 <= p21 && p12 >= p22 {
+        if p11 >= p21 && p12 <= p22 || p11 <= p21 && p12 >= p22 || p11 >= p22 && p12 <= p21 || p11 <= p22 && p12 >= p21 {
             matches += 1
         }
     }
