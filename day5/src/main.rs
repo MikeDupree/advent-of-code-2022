@@ -19,7 +19,6 @@ fn main() {
     let mut line_count = 0;
     let mut stacks_complete = false;
     for line in contents.lines() {
-        println!("Line : {}", line_count);
 
         if line_count == 8 {
             stacks_complete = true;
@@ -27,10 +26,8 @@ fn main() {
         if !stacks_complete {
             for c in line.chars() {
                 if !skip.contains(&c.to_string().as_str()) {
-                    println!("stack i {} : {}", stack_index, c);
                     if stack_index == 2 {
                         stack1.push(c);
-                        println!("stack 1 {:?}", stack1);
                     }
                     match stack_index {
                         1 => stack1.push(c),
@@ -51,7 +48,6 @@ fn main() {
 
         stack_index = 0;
         if line_count == 9 {
-            println!("line = {}", line);
             stack1.reverse();
             stack2.reverse();
             stack3.reverse();
@@ -68,7 +64,8 @@ fn main() {
             let inst: String = line.chars().filter(|c| c.is_digit(10)||c.is_whitespace()).collect();
             let numbers: Result<Vec<i32>, _> = inst.split_whitespace().map(str::parse).collect();
 
-            println!("{:?}", numbers);
+            // [amount to move, from, to]
+            println!("{:?}", numbers.ok().unwrap());
         }
 
         line_count += 1;
