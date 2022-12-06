@@ -61,19 +61,20 @@ fn main() {
             let result: Result<Vec<i32>, _> = inst.split_whitespace().map(str::parse).collect();
             let instructions = result.ok().unwrap();
             // [amount to move, from, to]
-            println!("{:?}", instructions);
             let amount: i32 = instructions[0];
             let from: i32 = instructions[1] - 1;
             let to: i32 = instructions[2] - 1;
-            for _i in 0..amount {
-                //println!("from :: {:?}", stack[from as usize]);
-                //println!("to :: {:?}", stack[to as usize]);
-                let item = stack[from as usize].pop();
-                //println!("{}", item.unwrap());
+            let mut holder: Vec<char> = Vec::new();
 
+            for _i in 0..amount {
+                let item = stack[from as usize].pop();
+                holder.push(item.unwrap());
+            }
+
+            for _i in 0..amount {
+                let item = holder.pop();
+                println!("{}", item.unwrap());
                 stack[to as usize].push(item.unwrap());
-                //println!("from :: {:?}", stack[from as usize]);
-                //println!("to :: {:?}", stack[to as usize]);
             }
         }
 
