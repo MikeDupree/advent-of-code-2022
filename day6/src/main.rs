@@ -17,7 +17,7 @@ fn find_first_marker(buffer: &str) -> i32 {
         last_four[3] = c;
 
         // Check if all characters in the last four are different
-        if i > 3 && is_unique(&last_four){
+        if i > 3 && is_unique(&last_four) {
             // If so, return the number of characters processed so far plus four
             return (i + 1) as i32;
         }
@@ -29,7 +29,9 @@ fn find_first_marker(buffer: &str) -> i32 {
 
 fn find_start_marker(buffer: &str) -> i32 {
     // Keep track of the last four characters received
-    let mut m = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+    let mut m = [
+        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    ];
 
     for (i, c) in buffer.chars().enumerate() {
         // Shift the last fourteen characters over by one,
@@ -51,18 +53,6 @@ fn find_start_marker(buffer: &str) -> i32 {
 fn is_unique(arr: &[char]) -> bool {
     // create a mutable hash set
     let mut set = std::collections::HashSet::new();
-
-    // iterate over the elements in the array
-    for elem in arr {
-        // if the element is already in the set, return false
-        if set.contains(elem) {
-            return false;
-        }
-
-        // otherwise, insert the element into the set
-        set.insert(elem);
-    }
-
-    // if we get to this point, all elements are unique, so return true
-    true
+    // iterate over the elements in the array and return false if any element is not unique
+    arr.iter().all(|elem| set.insert(elem))
 }
