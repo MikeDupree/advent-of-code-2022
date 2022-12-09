@@ -17,16 +17,14 @@ fn find_tree_house_location(c: &str) {
     let mut visibleb_trees = 0;
     for (ri, row) in trees.iter().enumerate() {
         for (ti, tree) in trees[ri].iter().enumerate() {
-            //println!("ri {} ti {}", ri, ti);
-
             if ri == 0 || ri == row.len() - 1 || ti == 0 || ti == trees[ri].len() - 1 {
-                //visible_trees += 1;
                 visibleb_trees += 1;
                 continue;
             }
             let mut vis: Vec<Vec<bool>> = vec![Vec::new(), Vec::new(), Vec::new(), Vec::new()];
 
             let t = trees[ri].clone();
+
             //check left
             for l in 0..ti {
                 vis[0].push(tree > &t[l]);
@@ -39,10 +37,10 @@ fn find_tree_house_location(c: &str) {
             for u in 0..ri {
                 vis[2].push(tree > &trees[u][ti]);
             }
+            // check down
             for d in ri + 1..trees.len() {
                 vis[3].push(tree > &trees[d][ti]);
             }
-            
 
             if vis[0].clone().into_iter().all(|t| t)
                 || vis[1].clone().into_iter().all(|t| t)
