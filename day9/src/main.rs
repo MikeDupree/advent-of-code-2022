@@ -16,7 +16,8 @@ fn follow_head(c: &str) {
     let mut tail_moves = 0;
     let mut tpos_x = "0";
     let mut tpos_y = "0";
-
+    let mut tgrid
+    let mut positions: Vec<String> = vec![String::from("0,0")];
     for line in c.lines() {
         //  print!("{} ", line);
         let mut chars = line.chars().collect::<Vec<char>>();
@@ -54,6 +55,8 @@ fn follow_head(c: &str) {
                         tpos_x = "-1"
                     }
                 }
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             }
 
@@ -65,6 +68,8 @@ fn follow_head(c: &str) {
             {
                 tpos_y = "0";
                 tpos_x = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             }
 
@@ -75,6 +80,8 @@ fn follow_head(c: &str) {
                 } else {
                     tpos_y = "1";
                 }
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+                continue;
             }
 
             if mc[0] == "x" && tpos_x == "0" && tpos_y != "0" {
@@ -83,35 +90,49 @@ fn follow_head(c: &str) {
                 } else {
                     tpos_x = "1";
                 }
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+                continue;
             }
 
             // tail is diagonal but there is no tail movement
             // update the tail pos for one coord
             if mc[0] == "y" && mc[1] == tpos_y && tpos_x != "0" {
                 tpos_y = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             } else if mc[0] == "x" && mc[1] == tpos_x && tpos_y != "0" {
                 tpos_x = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             }
             // single movement that moves the tail
             if mc[0] == "y" && mc[1] == "1" && tpos_y == "-1" {
                 tail_moves += 1;
                 tpos_x = "0"; // x is centered because of move
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             } else if mc[0] == "y" && mc[1] == "-1" && tpos_y == "1" {
                 tpos_y = "1";
                 tpos_x = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             }
 
             if mc[0] == "x" && mc[1] == "1" && tpos_x == "-1" {
                 tail_moves += 1;
                 tpos_y = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             } else if mc[0] == "x" && mc[1] == "-1" {
                 tail_moves += 1;
                 tpos_y = "0";
+                positions.push(format!("{},{}", tpos_x, tpos_y));
+
                 continue;
             }
 
@@ -174,6 +195,8 @@ fn follow_head(c: &str) {
                 tpos_y = "0";
             }
         }
+
+        positions.push(format!("{},{}", tpos_x, tpos_y));
         println!("tail moves before {} after {}", tmb, tail_moves);
         if tail_moves != tmb {
             // use this to debug,
@@ -192,5 +215,6 @@ fn follow_head(c: &str) {
         //println!("");
     }
 
+    println!("positions: {}", positions.len());
     println!("Tail Moves: {} times", tail_moves);
 }
