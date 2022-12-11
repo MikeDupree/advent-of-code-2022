@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap,HashSet};
 use std::fs;
 
 fn main() {
@@ -12,7 +12,8 @@ fn follow_head(c: &str) {
     let axis = HashMap::from([('U', 1), ('D', -1), ('L', -1), ('R', 1)]);
     let coord = HashMap::from([('U', y), ('D', y), ('L', x), ('R', x)]);
     let reset_coord = HashMap::from([('U', x), ('D', x), ('L', y), ('R', y)]);
-    let mut tail_positions = vec![[0, 0]];
+    let mut tail_positions = vec![String::from("0,0")];
+    let mut tail_position = [0, 0];
     let mut head_position = [0, 0];
 
     for line in c.lines() {
@@ -49,8 +50,8 @@ fn follow_head(c: &str) {
                 //println!(" xi :: {}", xi);
                 for yi in -1..2 {
                     //println!(" yi :: {}", yi);
-                    if tail_positions.last().unwrap()[x] + xi == head_position[x]
-                        && tail_positions.last().unwrap()[y] + yi == head_position[y]
+                    if tail_position[x] + xi == head_position[x]
+                        && tail_position[y] + yi == head_position[y]
                     {
                         head_in_range = true;
                     }
@@ -62,33 +63,38 @@ fn follow_head(c: &str) {
                 continue;
             }
 
-            let mut xx = 0;
-            let mut yy = 0;
             let mut debug = true;
             if dir == 'U' || dir == 'D' {
-                xx = head_position[x];
-                yy = tail_positions.last().unwrap()[y] + axis.get(&dir).unwrap();
+                tail_position[x] = head_position[x];
+                tail_position[y] = tail_position[y] + axis.get(&dir).unwrap();
                 debug = false;
             } else {
-                xx = tail_positions.last().unwrap()[x] + axis.get(&dir).unwrap();
-                yy = head_position[y]; 
+                tail_position[x] = tail_position[x] + axis.get(&dir).unwrap();
+                tail_position[y] = head_position[y];
                 debug = false;
             }
             //println!("Tail before: {:?}", tail_positions.last().unwrap());
-            let new_tail_pos = [xx, yy];
 
-            tail_positions.push(new_tail_pos);
+            tail_positions.push(format!("{},{}", tail_position[x], tail_position[y]));
             //println!("Tail After: {:?}", tail_positions.last().unwrap());
 
             if debug {
                 println!("");
                 println!("-----------------------------");
-                println!("Error: expected to have updated tail position \n {:?}", tail_positions.last());
+                println!(
+                    "Error: expected to have updated tail position \n {:?}",
+                    tail_positions.last()
+                );
                 println!("-----------------------------");
                 println!("");
             }
         }
     }
-    println!("positions: {:?}", tail_positions.iter().unique());
 
+    // remove all duplicate elements.
+    let set: HashSet<String> = tail_positions
+        .into_iter().collect();
+
+    let vec: Vec<String> = set.into_iter().collect();
+    println!("positions: {:?}", vec.len());
 }
