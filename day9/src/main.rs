@@ -1,5 +1,5 @@
-use std::collections::{HashMap,HashSet};
-use std::fs;
+use std::collections::{HashMap, HashSet};
+use std::{fs, iter};
 
 fn main() {
     let contents = fs::read_to_string("input.txt").expect("Should have been able to read the file");
@@ -12,8 +12,12 @@ fn follow_head(c: &str) {
     let axis = HashMap::from([('U', 1), ('D', -1), ('L', -1), ('R', 1)]);
     let coord = HashMap::from([('U', y), ('D', y), ('L', x), ('R', x)]);
     let reset_coord = HashMap::from([('U', x), ('D', x), ('L', y), ('R', y)]);
-    let mut tail_positions = vec![String::from("0,0")];
-    let mut tail_position = [0, 0];
+
+    let mut tail_positions: Vec<_> = iter::repeat_with(|| vec![String::from("0,0")])
+        .take(9)
+        .collect();
+    let mut tail_position: Vec<_> = iter::repeat_with(|| [0, 0]).take(9).collect();
+    println!("t positions {:?}", tail_positions);
     let mut head_position = [0, 0];
 
     for line in c.lines() {
@@ -34,66 +38,70 @@ fn follow_head(c: &str) {
             // Update head position
             head_position[*coord.get(&dir).unwrap()] += axis.get(&dir).unwrap();
 
-            // Check for tail movement
-            // xi :: -1
-            // yi :: -1
-            // yi :: 0
-            // yi :: 1
-            // xi :: 0
-            // yi :: -1
-            // yi :: 0
-            // yi :: 1
-            // xi :: 1
-            // yi :: -1
-            let mut head_in_range = false;
-            for xi in -1..2 {
-                //println!(" xi :: {}", xi);
-                for yi in -1..2 {
-                    //println!(" yi :: {}", yi);
-                    if tail_position[x] + xi == head_position[x]
-                        && tail_position[y] + yi == head_position[y]
-                    {
-                        head_in_range = true;
+            for tail in 0..tail_position.len() {
+                // Check for tail movement
+                let mut head_in_range = false;
+
+                let mut head_of_tail = head_position.clone();
+                if tail != 0 {
+                    // If its not the first knot the head of that knot is the previous
+                    // knot.
+                    head_of_tail = tail_position[tail - 1].clone();
+                }
+
+                for xi in -1..2 {
+                    //println!(" xi :: {}", xi);
+                    for yi in -1..2 {
+                        //println!(" yi :: {}", yi);
+                        if tail_position[tail][x] + xi == head_of_tail[x]
+                            && tail_position[tail][y] + yi == head_of_tail[y]
+                        {
+                            head_in_range = true;
+                        }
                     }
                 }
-            }
 
-            // Head is in range. No tail movement.
-            if head_in_range {
-                continue;
-            }
+                // Head is in range. No tail movement.
+                if head_in_range {
+                    continue;
+                }
 
-            let mut debug = true;
-            if dir == 'U' || dir == 'D' {
-                tail_position[x] = head_position[x];
-                tail_position[y] = tail_position[y] + axis.get(&dir).unwrap();
-                debug = false;
-            } else {
-                tail_position[x] = tail_position[x] + axis.get(&dir).unwrap();
-                tail_position[y] = head_position[y];
-                debug = false;
-            }
-            //println!("Tail before: {:?}", tail_positions.last().unwrap());
+                let mut debug = true;
+                if dir == 'U' || dir == 'D' {
+                    tail_position[tail][x] = head_of_tail[x];
+                    tail_position[tail][y] = tail_position[tail][y] + axis.get(&dir).unwrap();
+                    debug = false;
+                } else {
+                    tail_position[tail][x] = tail_position[tail][x] + axis.get(&dir).unwrap();
+                    tail_position[tail][y] = head_of_tail[y];
+                    debug = false;
+                }
+                //println!("Tail before: {:?}", tail_positions.last().unwrap());
 
-            tail_positions.push(format!("{},{}", tail_position[x], tail_position[y]));
-            //println!("Tail After: {:?}", tail_positions.last().unwrap());
+                tail_positions[tail].push(format!(
+                    "{},{}",
+                    tail_position[tail][x], tail_position[tail][y]
+                ));
+                //println!("Tail After: {:?}", tail_positions.last().unwrap());
 
-            if debug {
-                println!("");
-                println!("-----------------------------");
-                println!(
-                    "Error: expected to have updated tail position \n {:?}",
-                    tail_positions.last()
-                );
-                println!("-----------------------------");
-                println!("");
+                if debug {
+                    println!("");
+                    println!("-----------------------------");
+                    println!(
+                        "Error: expected to have updated tail position \n {:?}",
+                        tail_positions[tail].last()
+                    );
+                    println!("-----------------------------");
+                    println!("");
+                }
             }
         }
     }
 
     // remove all duplicate elements.
-    let set: HashSet<String> = tail_positions
-        .into_iter().collect();
+    let tail = tail_positions[8].clone();
+    let set: HashSet<String> 
+    = tail.into_iter().collect();
 
     let vec: Vec<String> = set.into_iter().collect();
     println!("positions: {:?}", vec.len());
